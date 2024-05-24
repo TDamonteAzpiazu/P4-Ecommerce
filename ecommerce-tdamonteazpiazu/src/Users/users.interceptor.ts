@@ -6,7 +6,7 @@ import { Observable, map } from "rxjs";
 export class PasswordInterceptor implements NestInterceptor{
     intercept(context: ExecutionContext, next: CallHandler<any>): Observable<any> | Promise<Observable<any>> {
         return next.handle().pipe(
-            map((data) => {
+            map((data) => { 
                 if (data.password) {
                     const { password, ...rest } = data;
                     // data.password = "******"

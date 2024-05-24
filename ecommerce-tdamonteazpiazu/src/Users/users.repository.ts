@@ -32,8 +32,11 @@ export class UsersRepository {
         city: ''
     }];
     
-    async getUsers() : Promise<User[]> {
-        return this.users;
+    async getUsers(pageNumber: number, limitNumber: number) : Promise<Omit<User, 'password'>[]> {
+        const startIndex = (pageNumber - 1) * limitNumber;
+        const endIndex = startIndex + limitNumber;
+        const usersWithoutPassword = this.users.slice(startIndex, endIndex).map(({password, ...rest}) => rest);
+        return usersWithoutPassword;
     }
 
     async getUserById(id: number) : /*Promise<User>*/ Promise<Omit<User, 'password'>>  {
@@ -59,5 +62,10 @@ export class UsersRepository {
         const i = this.users.findIndex(user => user.id === id);
         this.users.splice(i, 1);
         return id;
+    }
+
+    async findByCredentials(email: string, password: string) : Promise<User | null> {
+        const user = this.users.find(user => user.email === email && user.password === password);
+        return user ? user : null;
     }
 }

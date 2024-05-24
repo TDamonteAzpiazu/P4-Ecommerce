@@ -6,8 +6,8 @@ import { User } from "./users.interfaces";
 @Injectable()
 export class UsersService {
     constructor(private readonly usersRepository: UsersRepository) {}
-    getUsers(): Promise<User[]> {
-        return this.usersRepository.getUsers();
+    getUsers(pageNumber: number, limitNumber: number): Promise<Omit<User, 'password'>[]> {
+        return this.usersRepository.getUsers(pageNumber, limitNumber);
     }
 
     getUserById(id: number): Promise<Omit<User, 'password'>> {
