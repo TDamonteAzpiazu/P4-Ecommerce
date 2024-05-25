@@ -1,20 +1,22 @@
-import { Global, Module /*, MiddlewareConsumer, NestModule*/ } from '@nestjs/common';
+import { Global, Module } from '@nestjs/common';
 import { AppController } from './app.controller';
 import { AppService } from './app.service';
 import { UsersModule } from './Users/users.module';
 import { ProductsModule } from './Products/products.module';
 import { AuthModule } from './Auth/auth.module';
-// import { LoggerMiddleware } from './middleware/loggerGlobal';
+import typeOrmConfig from './config/typeorm'
+import { ConfigModule, ConfigService } from '@nestjs/config';
+import { TypeOrmModule } from '@nestjs/typeorm';
+import { CategoriesModule } from './Categories/categories.module';
 
 @Global()
 @Module({
-  imports: [UsersModule, ProductsModule, AuthModule],
+  imports: [
+    ConfigModule.forRoot({ isGlobal: true, load: [typeOrmConfig]}),
+    TypeOrmModule.forRootAsync({inject: [ConfigService], useFactory: (configService: ConfigService) => configService.get('typeorm')}),
+    UsersModule, ProductsModule, AuthModule, CategoriesModule],
   controllers: [AppController],
   providers: [AppService],
 })
-// export class AppModule implements NestModule {
-//   configure(consumer: MiddlewareConsumer) {
-//     consumer.apply(LoggerMiddleware).forRoutes('/');
-//   }
-// }
+
 export class AppModule {}

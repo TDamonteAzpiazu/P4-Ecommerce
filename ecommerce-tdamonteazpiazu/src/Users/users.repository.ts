@@ -46,22 +46,31 @@ export class UsersRepository {
         return rest;
     }
 
-    async createUser(user : Omit<User, 'id'>): Promise<number> {
+    async createUser(user : Omit<User, 'id'>): Promise<Omit<User, 'password'> | string> {
     const id = this.users[this.users.length - 1].id + 1;
-    this.users.push({id, ...user});
-    return id;
+    const newUser = {id, ...user};
+    this.users.push(newUser);
+    const { password, ...rest } = newUser;
+    return rest;
     }
 
-    async updateUser(id: number, user: Partial<User>): Promise<number> {
-        const i = this.users.findIndex(user => user.id === id);
-        this.users[i] = {...this.users[i], ...user};
-        return id;
+    async updateUser(id: number, user: Partial<User>): Promise<Omit<User, 'password'> | string> {
+        const foundUser = this.users.find(user => user.id === id);
+        if(!foundUser) {
+            return "User not found";
+        }
+        const updatedUser = {...foundUser, ...user};
+        this.users = this.users.map(user => user.id === id ? updatedUser : user);
+        const { password, ...rest } = updatedUser;
+        return rest;
     }
 
-    async deleteUser(id: number) : Promise<number> {
+    async deleteUser(id: number) : Promise<Omit<User, 'password'>> {
         const i = this.users.findIndex(user => user.id === id);
+        const user = this.users[i];
         this.users.splice(i, 1);
-        return id;
+        const { password, ...rest } = user;
+        return rest;
     }
 
     async findByCredentials(email: string, password: string) : Promise<User | null> {

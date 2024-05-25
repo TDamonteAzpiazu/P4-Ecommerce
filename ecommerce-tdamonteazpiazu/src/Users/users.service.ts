@@ -14,15 +14,15 @@ export class UsersService {
         return this.usersRepository.getUserById(id);
     }
 
-    createUser(user: Omit<User, 'id'>) : Promise<number> {    
+    createUser(user: Omit<User, 'id'>) : Promise<Omit<User, 'password'> | string> {    
         return this.usersRepository.createUser(user);
     }
 
-    updateUser(id: number, user: Partial<User>) : Promise<number> {
+    updateUser(id: number, user: Partial<User>) : Promise<Omit<User, 'password'> | string> {
         return this.usersRepository.updateUser(id, user);
     }
 
-    deleteUser(id: number) : Promise<number> {
+    deleteUser(id: number) : Promise<Omit<User, 'password'>> {
         return this.usersRepository.deleteUser(id);
     }
 }

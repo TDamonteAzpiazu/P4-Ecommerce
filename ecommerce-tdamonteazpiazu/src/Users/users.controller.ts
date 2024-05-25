@@ -2,7 +2,7 @@ import { Body, Controller, Delete, Get, Param, Post, Put, Query, UseGuards, UseI
 import { UsersService } from "./users.service";
 import { User } from "./users.interfaces";
 import { PasswordInterceptor } from "./users.interceptor";
-import { AuthorizationGuard } from "src/guards/authorization.guard";
+import { AuthorizationGuard } from "src/Auth/guards/authorization.guard";
 
 @Controller('users')
 export class UsersController {
@@ -23,19 +23,19 @@ export class UsersController {
     }
 
     @Post()
-    createUser(@Body() user: Omit<User, 'id'>) : Promise<number> {
+    createUser(@Body() user: Omit<User, 'id'>) : Promise<Omit<User, 'password'> | string> {
         return this.usersService.createUser(user);
     }
 
     @Put(':id')
     @UseGuards(AuthorizationGuard)
-    updateUser(@Param('id') id: string, @Body() user: Partial<User>) : Promise<number> {
+    updateUser(@Param('id') id: string, @Body() user: Partial<User>) : Promise<Omit<User, 'password'> | string> {
         return this.usersService.updateUser(Number(id), user);
     }
 
     @Delete(':id')
     @UseGuards(AuthorizationGuard)
-    deleteUser(@Param('id') id: string) : Promise<number> {
+    deleteUser(@Param('id') id: string) : Promise<Omit<User, 'password'>> {
         return this.usersService.deleteUser(Number(id));
     }
 }

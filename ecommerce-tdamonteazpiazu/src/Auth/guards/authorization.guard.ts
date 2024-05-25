@@ -12,6 +12,9 @@ function validateHeaders(req: Request) {
     if (items.length !== 3 || items[0] !== 'Basic') {
         return false
     }
+    // const email = items[1];
+    // const password = items[2];
+    // if (!email || !password) return false
     return true
 }
 
