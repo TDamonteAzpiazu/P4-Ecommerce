@@ -1,28 +1,45 @@
-import { Injectable } from "@nestjs/common";
-import { UsersRepository } from "./users.repository";
-import { User } from "./users.interfaces";
-
+import { Injectable, NotFoundException } from "@nestjs/common";
+import { User } from "./users.entity";
+import { Repository } from "typeorm";
+import { InjectRepository } from "@nestjs/typeorm";
 
 @Injectable()
 export class UsersService {
-    constructor(private readonly usersRepository: UsersRepository) {}
-    getUsers(pageNumber: number, limitNumber: number): Promise<Omit<User, 'password'>[]> {
-        return this.usersRepository.getUsers(pageNumber, limitNumber);
+    constructor(@InjectRepository(User) private readonly usersRepository: Repository<User>) {}
+    async getUsers(pageNumber: number, limitNumber: number): Promise<User[]> {
+        const [users] = await this.usersRepository.findAndCount({
+            skip: (pageNumber - 1) * limitNumber,
+            take: limitNumber,
+            select: ['id', 'email', 'name', 'address', 'phone', 'country', 'city', 'orders'],
+            relations: { orders: true }
+        });
+        return users;
     }
 
-    getUserById(id: number): Promise<Omit<User, 'password'>> {
-        return this.usersRepository.getUserById(id);
+    async getUserById(id: string): Promise<User> {
+        const userFound = await this.usersRepository.findOne({ where : { id: id }, select: ['id', 'email', 'name', 'address', 'phone', 'country', 'city', 'orders'], relations: { orders: true }});
+        return userFound;
     }
 
-    createUser(user: Omit<User, 'id'>) : Promise<Omit<User, 'password'> | string> {    
-        return this.usersRepository.createUser(user);
+    async createUser(user: Omit<User, 'id'>) : Promise<User> {
+        const newUser = this.usersRepository.create(user);
+        await this.usersRepository.save(newUser);
+        return newUser;
     }
 
-    updateUser(id: number, user: Partial<User>) : Promise<Omit<User, 'password'> | string> {
-        return this.usersRepository.updateUser(id, user);
+    async updateUser(id: string, user: Partial<User>) : Promise<User> {
+        const foundUser = await this.usersRepository.findOne({ where : { id: id }});
+        Object.assign(foundUser, user);
+        await this.usersRepository.save(foundUser);
+        return foundUser
     }
 
-    deleteUser(id: number) : Promise<Omit<User, 'password'>> {
-        return this.usersRepository.deleteUser(id);
+    async deleteUser(id: string) : Promise<User> {
+        const foundUser = await this.usersRepository.findOne({ where : { id: id }});
+        if(!foundUser) {
+            throw new NotFoundException('User not found');
+        }
+        await this.usersRepository.delete(foundUser);
+        return foundUser
     }
 }

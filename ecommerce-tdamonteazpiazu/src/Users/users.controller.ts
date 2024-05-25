@@ -1,6 +1,6 @@
-import { Body, Controller, Delete, Get, Param, Post, Put, Query, UseGuards, UseInterceptors } from "@nestjs/common";
+import { Body, Controller, Delete, Get, Param, Post, Put, Query, UseGuards } from "@nestjs/common";
 import { UsersService } from "./users.service";
-import { User } from "./users.interfaces";
+import { User } from "./users.entity";
 import { PasswordInterceptor } from "./users.interceptor";
 import { AuthorizationGuard } from "src/Auth/guards/authorization.guard";
 
@@ -19,7 +19,7 @@ export class UsersController {
     @Get(':id')
     @UseGuards(AuthorizationGuard)
     getUserById(@Param('id') id: string) : Promise<Omit<User, 'password'>> {
-        return this.usersService.getUserById(Number(id));
+        return this.usersService.getUserById(id);
     }
 
     @Post()
@@ -29,13 +29,13 @@ export class UsersController {
 
     @Put(':id')
     @UseGuards(AuthorizationGuard)
-    updateUser(@Param('id') id: string, @Body() user: Partial<User>) : Promise<Omit<User, 'password'> | string> {
-        return this.usersService.updateUser(Number(id), user);
+    updateUser(@Param('id') id: string, @Body() user: Partial<User>) : Promise<User> {
+        return this.usersService.updateUser(id, user);
     }
 
     @Delete(':id')
     @UseGuards(AuthorizationGuard)
-    deleteUser(@Param('id') id: string) : Promise<Omit<User, 'password'>> {
-        return this.usersService.deleteUser(Number(id));
+    deleteUser(@Param('id') id: string) : Promise<User> {
+        return this.usersService.deleteUser(id);
     }
 }
