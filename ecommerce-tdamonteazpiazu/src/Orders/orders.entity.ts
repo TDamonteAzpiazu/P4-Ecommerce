@@ -12,7 +12,7 @@ export class Order {
     user: User;
 
     @Column('date')
-    date: string;
+    date: Date;
 
     @OneToOne(() => OrderDetail, orderDetail => orderDetail.order)
     @JoinColumn()
