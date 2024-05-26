@@ -28,15 +28,15 @@ export class OrdersService {
 
         const user = await this.usersRepository.findOne({ where: { id: data.userId } })
         if (!user) {
-            throw new Error('User not found')
+            throw new NotFoundException('User not found')
         }
         for(const product of data.products) {
             const foundProduct = await this.productsRepository.findOne({ where: { id: product.id } })
             if(!foundProduct) {
-                throw new NotFoundException('Product not found')
+                throw new NotFoundException('One of the products was not found')
             }
             if(foundProduct.stock < product.quantity) {
-                throw new NotFoundException('Not enough stock')
+                throw new NotFoundException('Not enough stock for one of the products')
             }
             foundProduct.stock -= product.quantity
             updatedProduct.push(foundProduct)
@@ -45,15 +45,17 @@ export class OrdersService {
 
         await this.productsRepository.save(updatedProduct)
 
-        const newOrderDetail = this.orderDetailsRepository.create()
-        newOrderDetail.price = totalPrice
-        newOrderDetail.products = updatedProduct
+        const newOrderDetail = this.orderDetailsRepository.create({
+            price: totalPrice,
+            products: updatedProduct
+        })
         await this.orderDetailsRepository.save(newOrderDetail)
         
-        const newOrder = this.ordersRepository.create()
-        newOrder.date = new Date()
-        newOrder.orderDetail = newOrderDetail
-        newOrder.user = user
+        const newOrder = this.ordersRepository.create({
+            date: new Date(),
+            orderDetail: newOrderDetail,
+            user: user
+        })
         await this.ordersRepository.save(newOrder)
 
         return newOrder

@@ -10,14 +10,13 @@ export class UsersService {
         const [users] = await this.usersRepository.findAndCount({
             skip: (pageNumber - 1) * limitNumber,
             take: limitNumber,
-            select: ['id', 'email', 'name', 'address', 'phone', 'country', 'city', 'orders'],
             relations: { orders: true }
         });
         return users;
     }
 
     async getUserById(id: string): Promise<User> {
-        const userFound = await this.usersRepository.findOne({ where : { id: id }, select: ['id', 'email', 'name', 'address', 'phone', 'country', 'city', 'orders'], relations: { orders: true }});
+        const userFound = await this.usersRepository.findOne({ where : { id: id }, relations: { orders: true }});
         return userFound;
     }
 
