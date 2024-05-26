@@ -10,7 +10,7 @@ export class ProductsController {
     
     @Post()
     @UseGuards(AuthorizationGuard)
-    async createProduct(@Body() product : ProductDto) : Promise<string> {
+    async createProduct(@Body() product : ProductDto) : Promise<Product> {
         return await this.productsService.createProduct(product);
     }
 
@@ -45,9 +45,3 @@ export class ProductsController {
         return await this.productsService.deleteProduct(id);
     }
 }
-
-    //     @Delete(':id')
-    //     @UseGuards(AuthorizationGuard)
-    //     deleteProduct(@Param('id') id: string) : Promise<number> {
-    //         return this.productsService.deleteProduct(Number(id));
-    //     }

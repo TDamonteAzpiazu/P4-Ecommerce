@@ -13,7 +13,14 @@ export class ProductsService {
         @InjectRepository(Category) private readonly categoryRepository: Repository<Category>,
     ) {}
 
-    async createProduct(product: ProductDto) : Promise<string> {
+    async createProduct(product: ProductDto) : Promise<Product> {
+        const existingProduct = await this.productsRepository.findOne({where: {name: product.name , description: product.description}});
+        if(existingProduct) {
+            throw new NotFoundException('Product already exists, use the update Route');
+        }
+        if(!product.category) {
+            throw new NotFoundException('Category is missing');
+        }
         const category = await this.categoryRepository.findOne({where: {name: product.category}});
         if(!category) {
             throw new NotFoundException('Category not found');
@@ -27,7 +34,7 @@ export class ProductsService {
             category: category.id
         });
         await this.productsRepository.save(newProduct);
-        return newProduct.id;
+        return newProduct;
     }
 
     async seedProducts() {
