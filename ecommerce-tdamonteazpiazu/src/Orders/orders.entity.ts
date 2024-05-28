@@ -8,13 +8,14 @@ export class Order {
     @PrimaryGeneratedColumn('uuid')
     id: string = uuid();
 
-    @ManyToOne(() => User, user => user.orders)
+    @ManyToOne(() => User, user => user.orders, { onDelete: 'CASCADE' })
+    @JoinColumn()
     user: User;
 
     @Column('date')
     date: Date;
 
-    @OneToOne(() => OrderDetail, orderDetail => orderDetail.order)
+    @OneToOne(() => OrderDetail, { cascade: true , onDelete: 'CASCADE' })
     @JoinColumn()
     orderDetail: OrderDetail;
 }

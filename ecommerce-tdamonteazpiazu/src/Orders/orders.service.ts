@@ -1,11 +1,11 @@
-import { Injectable, NotFoundException } from "@nestjs/common";
+import { BadRequestException, Injectable, NotFoundException } from "@nestjs/common";
 import { InjectRepository } from "@nestjs/typeorm";
 import { User } from "src/Users/users.entity";
 import { Repository } from "typeorm";
 import { Order } from "./orders.entity";
 import { Product } from "src/Products/products.entity";
 import { OrderDetail } from "src/OrderDetails/orderDetails.entity";
-import { OrdersDto } from "./orders.dto";
+import { CreateOrderDto } from "./createOrder.dto";
 
 @Injectable()
 export class OrdersService {
@@ -22,7 +22,7 @@ export class OrdersService {
         return await this.ordersRepository.findOne({ where: { id: id }, relations: { user: true, orderDetail: { products: true } } });
     }
 
-    async addOrder(data: OrdersDto) {
+    async addOrder(data : CreateOrderDto) {
         const updatedProduct = []
         let totalPrice = 0
 
@@ -36,7 +36,7 @@ export class OrdersService {
                 throw new NotFoundException('One of the products was not found')
             }
             if(foundProduct.stock < product.quantity) {
-                throw new NotFoundException('Not enough stock for one of the products')
+                throw new BadRequestException('Not enough stock for one of the products')
             }
             foundProduct.stock -= product.quantity
             updatedProduct.push(foundProduct)

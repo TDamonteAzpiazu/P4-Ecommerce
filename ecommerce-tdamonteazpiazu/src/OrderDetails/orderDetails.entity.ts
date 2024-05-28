@@ -1,5 +1,4 @@
-import { Entity, PrimaryGeneratedColumn, Column, ManyToMany, OneToOne, JoinTable, JoinColumn } from 'typeorm';
-import { Order } from '../Orders/orders.entity';
+import { Entity, PrimaryGeneratedColumn, Column, ManyToMany, JoinTable } from 'typeorm';
 import { Product } from '../Products/products.entity';
 import {v4 as uuid} from 'uuid';
 
@@ -11,11 +10,11 @@ export class OrderDetail {
     @Column('decimal', { precision: 10, scale: 2 })
     price: number;
 
-    @OneToOne(() => Order, order => order.orderDetail)
-    @JoinColumn()
-    order: Order;
-
     @ManyToMany(() => Product, product => product.orderDetails)
-    @JoinTable()
+    @JoinTable({
+        name: 'orderdetails_products',
+        joinColumn: { name: 'product_id' , referencedColumnName: 'id'},
+        inverseJoinColumn: { name: 'orderdetails_id' , referencedColumnName: 'id'},
+    })
     products: Product[];
 }

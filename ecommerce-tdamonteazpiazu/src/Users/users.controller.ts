@@ -1,8 +1,8 @@
-import { Body, Controller, Delete, Get, Param, Post, Put, Query, UseGuards } from "@nestjs/common";
+import { Body, Controller, Delete, Get, Param, ParseUUIDPipe, Post, Put, Query, UseGuards } from "@nestjs/common";
 import { UsersService } from "./users.service";
 import { User } from "./users.entity";
-import { PasswordInterceptor } from "./users.interceptor";
 import { AuthorizationGuard } from "src/Auth/guards/authorization.guard";
+import { CreateUserDto } from "./createUser.dto";
 
 @Controller('users')
 export class UsersController {
@@ -10,32 +10,32 @@ export class UsersController {
 
     @Get()
     @UseGuards(AuthorizationGuard)
-    getUsers(@Query('page') page = '1', @Query('limit') limit = '5') : Promise<Omit<User, 'password'>[]> {
+    async getUsers(@Query('page') page = '1', @Query('limit') limit = '5') : Promise<Omit<User, 'password'>[]> {
         const pageNumber = Number(page)
         const limitNumber = Number(limit)
-        return this.usersService.getUsers(pageNumber, limitNumber);
+        return await this.usersService.getUsers(pageNumber, limitNumber);
     }
 
     @Get(':id')
     @UseGuards(AuthorizationGuard)
-    getUserById(@Param('id') id: string) : Promise<Omit<User, 'password'>> {
-        return this.usersService.getUserById(id);
+    async getUserById(@Param('id', ParseUUIDPipe) id: string) : Promise<Omit<User, 'password'>> {
+        return await this.usersService.getUserById(id);
     }
 
     @Post()
-    createUser(@Body() user: Omit<User, 'id'>) : Promise<Omit<User, 'password'> | string> {
-        return this.usersService.createUser(user);
+    async createUser(@Body() user: CreateUserDto) : Promise<Omit<User, 'password'> | string> {
+        return await this.usersService.createUser(user);
     }
 
     @Put(':id')
     @UseGuards(AuthorizationGuard)
-    updateUser(@Param('id') id: string, @Body() user: Partial<User>) : Promise<User> {
-        return this.usersService.updateUser(id, user);
+    async updateUser(@Param('id', ParseUUIDPipe) id: string, @Body() user: Partial<CreateUserDto>) : Promise<User> {
+        return await this.usersService.updateUser(id, user);
     }
 
     @Delete(':id')
     @UseGuards(AuthorizationGuard)
-    deleteUser(@Param('id') id: string) : Promise<User> {
-        return this.usersService.deleteUser(id);
+    async deleteUser(@Param('id', ParseUUIDPipe) id: string) : Promise<User> {
+        return await this.usersService.deleteUser(id);
     }
 }

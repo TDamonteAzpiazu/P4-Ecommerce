@@ -1,4 +1,4 @@
-import { Body, Controller, Delete, Get, Param, Post, Put, Query, UseGuards } from "@nestjs/common";
+import { Body, Controller, Delete, Get, Param, ParseUUIDPipe, Post, Put, Query, UseGuards } from "@nestjs/common";
 import { ProductsService } from "./products.service";
 import { Product } from "./products.entity";
 import { AuthorizationGuard } from "src/Auth/guards/authorization.guard";
@@ -29,13 +29,13 @@ export class ProductsController {
     }
 
     @Get(':id')
-    async getProductById(@Param('id') id: string) : Promise<Product> {
+    async getProductById(@Param('id', ParseUUIDPipe) id: string) : Promise<Product> {
         return await this.productsService.getProductById(id);
     }
 
     @Put(':id')
     @UseGuards(AuthorizationGuard)
-    async updateProduct(@Param('id') id: string, @Body() product: Partial<Product>) : Promise<Product>{
+    async updateProduct(@Param('id', ParseUUIDPipe) id: string, @Body() product: ProductDto) : Promise<Product>{
         return await this.productsService.updateProduct(id, product);
     }
 

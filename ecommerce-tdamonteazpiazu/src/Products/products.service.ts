@@ -64,8 +64,15 @@ export class ProductsService {
         return await this.productsRepository.findOne({where: {id: id}, relations: { category: true }});
     }
 
-    async updateProduct(id: string, product: Partial<Product>) : Promise<Product> {
+    async updateProduct(id: string, product: ProductDto) : Promise<Product> {
         const productToUpdate = await this.productsRepository.findOne({where: {id: id}});
+        if(!productToUpdate) {
+            throw new NotFoundException('Product not found');
+        }
+        if(product.category){
+            const category = await this.categoryRepository.findOne({where: {name: product.category}});
+            product.category = category.id;
+        }
         Object.assign(productToUpdate, product);
         await this.productsRepository.save(productToUpdate);
         return productToUpdate;

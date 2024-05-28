@@ -1,5 +1,5 @@
-import { Injectable } from "@nestjs/common";
-import { CredentialsDto } from "./auth.dto";
+import { BadRequestException, Injectable, NotFoundException } from "@nestjs/common";
+import { LoginUserDto } from "./auth.dto";
 import { User } from "src/Users/users.entity";
 import { InjectRepository } from "@nestjs/typeorm";
 import { Repository } from "typeorm";
@@ -11,13 +11,13 @@ export class AuthService {
         return "Getting auth";
     }
 
-    async signIn(credentials: CredentialsDto) : Promise<User | string> {
+    async signIn(credentials: LoginUserDto) : Promise<User> {
         if(!credentials.email || !credentials.password){
-            return "Faltan credenciales";
+            throw new BadRequestException('Faltan credenciales')
         }
         const user = await this.usersRepository.findOne({where: {email: credentials.email, password:credentials.password}});
         if (!user) {
-            return "Email o contraseña incorrectos"
+            throw new NotFoundException('Email o contraseña incorrectos')
         }
         return user
     }

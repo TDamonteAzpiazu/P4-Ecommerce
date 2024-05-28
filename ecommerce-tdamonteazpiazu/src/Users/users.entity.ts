@@ -1,4 +1,4 @@
-import { Entity, PrimaryGeneratedColumn, Column, OneToMany } from 'typeorm';
+import { Entity, PrimaryGeneratedColumn, Column, OneToMany, JoinColumn } from 'typeorm';
 import { Order } from '../Orders/orders.entity';
 import {v4 as uuid} from 'uuid';
 
@@ -7,27 +7,28 @@ export class User {
     @PrimaryGeneratedColumn('uuid')
     id: string = uuid();
 
-    @Column({ length: 50})
+    @Column({ type: 'varchar', length: 50, nullable: false})
     name: string;
 
-    @Column({ length: 50, unique: true})
+    @Column({ type: 'varchar', length: 50, nullable: false, unique: true})
     email: string;
 
-    @Column({ length: 20 , select : false})
+    @Column({type: 'varchar', length: 20 , nullable: false, select : false})
     password: string;
 
-    @Column('int', { nullable: true })
+    @Column({ type: 'int', nullable: true })
     phone: number;
 
-    @Column({ length: 50 , nullable: true})
+    @Column({ type: 'varchar', length: 50 , nullable: true})
     country: string;
 
-    @Column('text' , { nullable: true})
+    @Column({ type: 'text' ,  nullable: true})
     address: string;
 
-    @Column({ length: 50 , nullable: true})
+    @Column({ type: 'varchar', length: 50 , nullable: true})
     city: string;
 
-    @OneToMany(() => Order, order => order.user)
+    @OneToMany(() => Order, order => order.user, { cascade: true , onDelete: 'CASCADE' })
+    @JoinColumn()
     orders: Order[];
 }

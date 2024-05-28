@@ -8,25 +8,24 @@ export class Product {
     @PrimaryGeneratedColumn('uuid')
     id: string = uuid();
 
-    @Column({ length: 50 })
+    @Column({ type: 'varchar', length: 50, unique: true, nullable: false})
     name: string;
 
-    @Column('text')
+    @Column({type:'text', nullable: false})
     description: string;
 
-    @Column('decimal', { precision: 10, scale: 2 })
+    @Column('decimal', { precision: 10, scale: 2 , nullable: false})
     price: number;
 
-    @Column('int')
+    @Column('int', { nullable: false})
     stock: number;
 
-    @Column({ default: 'default-image.jpg' , nullable: true})
+    @Column({type: 'text', default: 'default-image.jpg'})
     imgUrl: string;
 
     @ManyToOne(() => Category, category => category.products)
     category: Category | Category['id'];
 
     @ManyToMany(() => OrderDetail, orderDetail => orderDetail.products)
-    @JoinTable()
     orderDetails: OrderDetail[];
 }
