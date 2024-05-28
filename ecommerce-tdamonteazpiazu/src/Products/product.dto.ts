@@ -3,6 +3,6 @@ export interface ProductDto {
     description: string
     price: number
     stock: number
-    imageUrl: string
+    imgUrl: string
     category: string
 }

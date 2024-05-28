@@ -40,7 +40,7 @@ export class UsersService {
 
     async updateUser(id: string, user: Partial<User>) : Promise<User> {
         const foundUser = await this.usersRepository.findOne({ where : { id: id }});
-        Object.assign(foundUser, user);
+        this.usersRepository.merge(foundUser, user);
         await this.usersRepository.save(foundUser);
         return foundUser
     }

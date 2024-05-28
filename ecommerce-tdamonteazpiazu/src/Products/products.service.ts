@@ -30,7 +30,7 @@ export class ProductsService {
             description: product.description,
             price: product.price,
             stock: product.stock,
-            imgUrl: product.imageUrl,
+            imgUrl: product.imgUrl,
             category: category.id
         });
         await this.productsRepository.save(newProduct);
@@ -64,16 +64,19 @@ export class ProductsService {
         return await this.productsRepository.findOne({where: {id: id}, relations: { category: true }});
     }
 
-    async updateProduct(id: string, product: ProductDto) : Promise<Product> {
+    async updateProduct(id: string, product: Partial<ProductDto>) : Promise<Product> {
         const productToUpdate = await this.productsRepository.findOne({where: {id: id}});
         if(!productToUpdate) {
             throw new NotFoundException('Product not found');
         }
         if(product.category){
             const category = await this.categoryRepository.findOne({where: {name: product.category}});
+            if(!category) {
+                throw new NotFoundException('Category not found');
+            }
             product.category = category.id;
         }
-        Object.assign(productToUpdate, product);
+        this.productsRepository.merge(productToUpdate, product);
         await this.productsRepository.save(productToUpdate);
         return productToUpdate;
     }

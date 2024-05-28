@@ -9,13 +9,14 @@ import { ConfigModule, ConfigService } from '@nestjs/config';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { CategoriesModule } from './Categories/categories.module';
 import { OrdersModule } from './Orders/orders.module';
+import { CloudinaryModule } from './Cloudinary/cloudinary.module';
 
 @Global()
 @Module({
   imports: [
     ConfigModule.forRoot({ isGlobal: true, load: [typeOrmConfig]}),
     TypeOrmModule.forRootAsync({inject: [ConfigService], useFactory: (configService: ConfigService) => configService.get('typeorm')}),
-    UsersModule, ProductsModule, AuthModule, CategoriesModule, OrdersModule],
+    UsersModule, ProductsModule, AuthModule, CategoriesModule, OrdersModule, CloudinaryModule],
   controllers: [AppController],
   providers: [AppService],
 })
