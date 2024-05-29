@@ -10,6 +10,6 @@ export class LoginUserDto {
     @IsString()
     @MinLength(8)
     @MaxLength(15)
-    @Matches(/^(?=.[a-z])(?=.[A-Z])(?=.\d)(?=.[!@#$%^&*_-]).{8,15}$/)
+    @Matches(/^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[!@#$%^&*_-]).{8,15}$/)
     password: string;
 }

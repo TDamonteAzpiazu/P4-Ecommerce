@@ -16,7 +16,7 @@ export class CloudinaryController {
         @UploadedFile(new ParseFilePipe({
             validators: [
                 new MaxFileSizeValidator({
-                    maxSize: 20000000,
+                    maxSize: 200000,
                     message: "El tamaño máximo es de 200KB"
                 }),
                 new FileTypeValidator({
@@ -27,6 +27,6 @@ export class CloudinaryController {
     ) {
         await this.productService.getProductById(id)
         const image = await this.cloudinaryService.uploadImage(file);
-        return await this.productService.updateProduct(id, { imgUrl: image.url });
+        return await this.productService.updateProduct(id, { imgUrl: image.secure_url });
     }
 }

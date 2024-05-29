@@ -28,16 +28,6 @@ export class UsersService {
         return userFound;
     }
 
-    async createUser(user: CreateUserDto) : Promise<User> {
-        const userFound = await this.usersRepository.findOne({where: {email: user.email, password: user.password, name: user.name}});
-        if (userFound) {
-            throw new BadRequestException('User already exists');
-        }
-        const newUser = this.usersRepository.create(user);
-        await this.usersRepository.save(newUser);
-        return newUser;
-    }
-
     async updateUser(id: string, user: Partial<User>) : Promise<User> {
         const foundUser = await this.usersRepository.findOne({ where : { id: id }});
         this.usersRepository.merge(foundUser, user);

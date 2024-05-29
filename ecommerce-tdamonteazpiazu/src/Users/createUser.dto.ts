@@ -21,6 +21,13 @@ export class CreateUserDto {
 
     @IsNotEmpty()
     @IsString()
+    @MinLength(8)
+    @MaxLength(15)
+    @Matches(/^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[!@#$%^&_\-]).{8,15}$/, { message: 'password too weak' })
+    confirmPassword: string
+
+    @IsNotEmpty()
+    @IsString()
     @MinLength(3)
     @MaxLength(80)
     address: string

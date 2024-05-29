@@ -22,11 +22,6 @@ export class UsersController {
         return await this.usersService.getUserById(id);
     }
 
-    @Post()
-    async createUser(@Body() user: CreateUserDto) : Promise<Omit<User, 'password'> | string> {
-        return await this.usersService.createUser(user);
-    }
-
     @Put(':id')
     @UseGuards(AuthorizationGuard)
     async updateUser(@Param('id', ParseUUIDPipe) id: string, @Body() user: Partial<CreateUserDto>) : Promise<User> {
