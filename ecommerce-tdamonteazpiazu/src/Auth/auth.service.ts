@@ -15,8 +15,8 @@ export class AuthService {
         return "Getting auth";
     }
 
-    async signIn(credentials: LoginUserDto) : Promise<any> {
-        const user = await this.usersRepository.findOne({where: {email: credentials.email}, select: [ 'id', 'email', 'password',]});
+    async signIn(credentials: LoginUserDto) : Promise<{message: string, token: string}> {
+        const user = await this.usersRepository.findOne({where: {email: credentials.email}, select: [ 'id', 'email', 'password', 'role']});
         if (!user) {
             throw new NotFoundException('Email o contraseña incorrectos')
         }
@@ -26,7 +26,8 @@ export class AuthService {
         }
         const userPayload={
             id: user.id,
-            email: user.email
+            email: user.email,
+            role: user.role
         }
         const token = this.jwtService.sign(userPayload);
         return {

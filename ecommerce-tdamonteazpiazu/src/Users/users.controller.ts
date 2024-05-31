@@ -1,15 +1,19 @@
 import { Body, Controller, Delete, Get, Param, ParseUUIDPipe, Post, Put, Query, UseGuards } from "@nestjs/common";
 import { UsersService } from "./users.service";
 import { User } from "./users.entity";
-import { AuthorizationGuard } from "src/Auth/guards/authorization.guard";
+import { AuthorizationGuard } from "src/guards/authorization.guard";
 import { CreateUserDto } from "./createUser.dto";
+import { Roles } from "src/Roles/role.decorator";
+import { Role } from "src/Roles/roles.enum";
+import { RolesGuard } from "src/guards/admin.guard";
 
 @Controller('users')
 export class UsersController {
     constructor (private readonly usersService: UsersService) {}
 
     @Get()
-    @UseGuards(AuthorizationGuard)
+    @Roles(Role.Admin)
+    @UseGuards(AuthorizationGuard, RolesGuard)
     async getUsers(@Query('page') page = '1', @Query('limit') limit = '5') : Promise<Omit<User, 'password'>[]> {
         const pageNumber = Number(page)
         const limitNumber = Number(limit)
