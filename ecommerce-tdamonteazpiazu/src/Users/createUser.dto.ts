@@ -1,4 +1,5 @@
-import { IsEmail, IsNotEmpty, IsNumber, IsOptional, IsString, Matches, MaxLength, MinLength } from "class-validator";
+import { IsEmail, IsEmpty, IsNotEmpty, IsNumber, IsOptional, IsString, Matches, MaxLength, MinLength } from "class-validator";
+import { Role } from "src/Roles/roles.enum";
 
 export class CreateUserDto {
 
@@ -47,4 +48,7 @@ export class CreateUserDto {
     @MaxLength(20)
     @IsOptional()
     city: string
+
+    @IsEmpty()
+    role?: Role
 } 

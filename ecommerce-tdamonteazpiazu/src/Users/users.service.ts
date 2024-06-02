@@ -22,10 +22,10 @@ export class UsersService implements OnModuleInit{
                 name: 'Tobias', 
                 email: 'tobo@mail.com', 
                 password: hashedPassword, 
-                address: "Calle falsa 222",
+                address: 'Calle falsa 222',
                 phone: 22222222,
-                country: "Argentina",
-                city: "Buenos Aires",
+                country: 'Argentina',
+                city: 'Buenos Aires',
                 role: Role.Admin
             });
         }
@@ -62,15 +62,15 @@ export class UsersService implements OnModuleInit{
             throw new NotFoundException('User not found');
         }
 
-        for(const order of foundUser.orders) {
-            if(order.orderDetail) {
-                await this.orderDetailsRepository.delete(order.orderDetail.id)
-            }
-        }
-        await this.ordersRepository.delete({ user: foundUser })
-        await this.usersRepository.delete(foundUser.id);
+        // for(const order of foundUser.orders) {
+        //     if(order.orderDetail) {
+        //         await this.orderDetailsRepository.delete(order.orderDetail.id)
+        //     }
+        // }
+        // await this.ordersRepository.delete({ user: foundUser })
+        // await this.usersRepository.delete(foundUser.id);
         
-        // await this.usersRepository.remove(foundUser)
+        await this.usersRepository.remove(foundUser)
 
         return foundUser
     }

@@ -32,7 +32,7 @@ export class User {
     @Column({ default: Role.User, select: false })
     role: Role;
 
-    @OneToMany(() => Order, order => order.user, { cascade: true , onDelete: 'CASCADE' })
+    @OneToMany(() => Order, order => order.user/*, {onDelete: 'SET NULL' }*/)
     @JoinColumn()
     orders: Order[];
 }
