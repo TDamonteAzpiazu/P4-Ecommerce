@@ -10,9 +10,7 @@ import { Role } from "src/Roles/roles.enum";
 
 @Injectable()
 export class UsersService implements OnModuleInit{
-    constructor(@InjectRepository(User) private readonly usersRepository: Repository<User>,
-    @InjectRepository(Order) private readonly ordersRepository: Repository<Order>,
-    @InjectRepository(OrderDetail) private readonly orderDetailsRepository: Repository<OrderDetail>) {}
+    constructor(@InjectRepository(User) private readonly usersRepository: Repository<User>) {}
 
     async onModuleInit() {
         const user = await this.usersRepository.findOne({ where : { email: 'tobo@mail.com' }});
@@ -57,21 +55,11 @@ export class UsersService implements OnModuleInit{
     }
 
     async deleteUser(id: string) : Promise<User> {
-        const foundUser = await this.usersRepository.findOne({ where : { id: id }, relations: { orders: { orderDetail: true } }});
+        const foundUser = await this.usersRepository.findOne({ where : { id: id }/*, relations: { orders: { orderDetail: true } }*/});
         if(!foundUser) {
             throw new NotFoundException('User not found');
         }
-
-        // for(const order of foundUser.orders) {
-        //     if(order.orderDetail) {
-        //         await this.orderDetailsRepository.delete(order.orderDetail.id)
-        //     }
-        // }
-        // await this.ordersRepository.delete({ user: foundUser })
-        // await this.usersRepository.delete(foundUser.id);
-        
         await this.usersRepository.remove(foundUser)
-
         return foundUser
     }
 }

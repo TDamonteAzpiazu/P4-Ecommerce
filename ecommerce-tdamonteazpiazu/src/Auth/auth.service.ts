@@ -1,5 +1,5 @@
 import { BadRequestException, Injectable, NotFoundException } from "@nestjs/common";
-import { LoginUserDto } from "./auth.dto";
+import { AuthDto } from "./auth.dto";
 import { User } from "src/Users/users.entity";
 import { InjectRepository } from "@nestjs/typeorm";
 import { Repository } from "typeorm";
@@ -15,7 +15,7 @@ export class AuthService {
         return "Getting auth";
     }
 
-    async signIn(credentials: LoginUserDto) : Promise<{message: string, token: string}> {
+    async signIn(credentials: AuthDto) : Promise<{message: string, token: string}> {
         const user = await this.usersRepository.findOne({where: {email: credentials.email}, select: [ 'id', 'email', 'password', 'role']});
         if (!user) {
             throw new NotFoundException('Email o contraseña incorrectos')

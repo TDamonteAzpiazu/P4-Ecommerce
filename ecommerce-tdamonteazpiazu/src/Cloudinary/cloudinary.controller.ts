@@ -1,9 +1,11 @@
 import { Controller, FileTypeValidator, MaxFileSizeValidator, Param, ParseFilePipe, ParseUUIDPipe, Post, UploadedFile, UseGuards, UseInterceptors } from "@nestjs/common";
 import { CloudinaryService } from "./cloudinary.service";
 import { FileInterceptor } from "@nestjs/platform-express";
-import { ProductsService } from "src/Products/products.service";
-import { AuthorizationGuard } from "src/guards/authorization.guard";
+import { ProductsService } from "../Products/products.service";
+import { AuthorizationGuard } from "../guards/authorization.guard";
+import { ApiBearerAuth, ApiBody, ApiOperation, ApiTags } from "@nestjs/swagger";
 
+@ApiTags('Files')
 @Controller('files')
 export class CloudinaryController {
     constructor(private readonly cloudinaryService: CloudinaryService,
@@ -11,6 +13,8 @@ export class CloudinaryController {
     ) {}
 
     @Post('uploadImage/:id')
+    @ApiOperation({summary: 'Upload image', description: 'Recibe por parámetro el ID de un producto y por body la imagen a subir.'})
+    @ApiBearerAuth()
     @UseGuards(AuthorizationGuard)
     @UseInterceptors(FileInterceptor('file'))
     async uploadImage(
