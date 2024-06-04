@@ -3,7 +3,7 @@ import { CloudinaryService } from "./cloudinary.service";
 import { FileInterceptor } from "@nestjs/platform-express";
 import { ProductsService } from "../Products/products.service";
 import { AuthorizationGuard } from "../guards/authorization.guard";
-import { ApiBearerAuth, ApiBody, ApiOperation, ApiTags } from "@nestjs/swagger";
+import { ApiBearerAuth, ApiBody, ApiConsumes, ApiOperation, ApiTags } from "@nestjs/swagger";
 
 @ApiTags('Files')
 @Controller('files')
@@ -14,6 +14,18 @@ export class CloudinaryController {
 
     @Post('uploadImage/:id')
     @ApiOperation({summary: 'Upload image', description: 'Recibe por parámetro el ID de un producto y por body la imagen a subir.'})
+    @ApiConsumes('multipart/form-data')
+    @ApiBody({
+        schema: {
+            type: 'object',
+            properties: {
+                file: {
+                    type: 'string',
+                    format: 'binary'
+                }
+            }
+        }
+    })
     @ApiBearerAuth()
     @UseGuards(AuthorizationGuard)
     @UseInterceptors(FileInterceptor('file'))
