@@ -7,12 +7,12 @@ import { ApiOperation, ApiTags } from "@nestjs/swagger";
 export class CategoriesController {
     constructor(private readonly categoriesService: CategoriesService) {}
 
-    @Post('seeder')
+    /*@Post('seeder')
     @ApiOperation({summary: 'Seed categories', description: 'Crea las categorías en la base de datos.'})
     async addCategories() {
         await this.categoriesService.addCategories();
         return "Todo ok"
-    }
+    }*/
 
     @Get()
     @ApiOperation({summary: 'Get all categories', description: 'Retorna un arreglo de objetos con todas las categorías.'})

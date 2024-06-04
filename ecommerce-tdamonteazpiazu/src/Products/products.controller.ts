@@ -16,19 +16,16 @@ export class ProductsController {
     @Post()
     @ApiOperation({summary: 'Create product', description: 'Recibe por body la información de un producto y la crea en la base de datos.'})
     @ApiBody({type: ProductDto})
-    @ApiBearerAuth()
-    @Roles(Role.Admin)
-    @UseGuards(AuthorizationGuard, RolesGuard)
     async createProduct(@Body() product : ProductDto) : Promise<Product> {
         return await this.productsService.createProduct(product);
     }
 
-    @Post('seeder')
+    /*@Post('seeder')
     @ApiOperation({summary: 'Seed products', description: 'Crea los productos en la base de datos.'})
     async seedProducts() {
         await this.productsService.seedProducts();
         return 'Products seeded';
-    }
+    }*/
 
     @Get()
     @ApiOperation({summary: 'Get all products', description: 'Recibe por query la página y el límite de elementos por página y retorna un arreglo de objetos con todos los productos.'})
@@ -59,9 +56,6 @@ export class ProductsController {
 
     @Delete(':id')
     @ApiOperation({summary: 'Delete product', description: 'Recibe por parámetro el ID de un producto y lo elimina de la base de datos.'})
-    @ApiBearerAuth()
-    @Roles(Role.Admin)
-    @UseGuards(AuthorizationGuard, RolesGuard)
     async deleteProduct(@Param('id') id: string) : Promise<Product> {
         return await this.productsService.deleteProduct(id);
     }

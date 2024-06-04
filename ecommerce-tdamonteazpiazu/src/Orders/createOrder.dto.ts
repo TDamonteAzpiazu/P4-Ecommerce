@@ -12,7 +12,7 @@ export class CreateOrderDto {
     userId: string
 
     @ApiProperty({
-        description: 'Se recibe un array con objetos con los ids de los productos, como el Dto de ordersProducts',
+        description: 'Se recibe un array con objetos con los ids de los productos y las cantidades, como se ve en el Dto de ordersProducts',
         type: [OrdersProductsDto]
     })
     @IsNotEmpty()
