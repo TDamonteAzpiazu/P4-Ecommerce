@@ -7,6 +7,7 @@ import { Roles } from "../Roles/role.decorator";
 import { Role } from "../Roles/roles.enum";
 import { RolesGuard } from "../guards/admin.guard";
 import { ApiBearerAuth, ApiBody, ApiOperation, ApiQuery, ApiTags } from "@nestjs/swagger";
+import { CreateProductDecorator, DeleteProductDecorator, GetAllProductsDecorator, GetProductByIdDecorator, UpdateProductDecorator } from "./product.decorator";
 
 @ApiTags('Products')
 @Controller('products')
@@ -14,8 +15,7 @@ export class ProductsController {
     constructor(private readonly productsService: ProductsService) {}
     
     @Post()
-    @ApiOperation({summary: 'Create product', description: 'Recibe por body la información de un producto y la crea en la base de datos.'})
-    @ApiBody({type: ProductDto})
+    @CreateProductDecorator()
     async createProduct(@Body() product : ProductDto) : Promise<Product> {
         return await this.productsService.createProduct(product);
     }
@@ -28,9 +28,7 @@ export class ProductsController {
     }*/
 
     @Get()
-    @ApiOperation({summary: 'Get all products', description: 'Recibe por query la página y el límite de elementos por página y retorna un arreglo de objetos con todos los productos.'})
-    @ApiQuery({name: 'page', required: false, type: Number})
-    @ApiQuery({name: 'limit', required: false, type: Number})
+    @GetAllProductsDecorator()
     async getAllProducts(
         @Query('limit', ParseIntPipe) limit: number = 5,
         @Query('page', ParseIntPipe) page: number = 1,
@@ -39,14 +37,13 @@ export class ProductsController {
     }
 
     @Get(':id')
-    @ApiOperation({summary: 'Get product by ID', description: 'Recibe por parámetro el ID de un producto y retorna un objeto con todos sus datos.'})
+    @GetProductByIdDecorator()
     async getProductById(@Param('id', ParseUUIDPipe) id: string) : Promise<Product> {
         return await this.productsService.getProductById(id);
     }
 
     @Put(':id')
-    @ApiOperation({summary: 'Update product', description: 'Recibe por parámetro el ID de un producto y por body la información con la que actualiza sus datos.'})
-    @ApiBody({type: ProductDto})
+    @UpdateProductDecorator()
     @Roles(Role.Admin)
     @ApiBearerAuth()
     @UseGuards(AuthorizationGuard, RolesGuard)
@@ -55,7 +52,7 @@ export class ProductsController {
     }
 
     @Delete(':id')
-    @ApiOperation({summary: 'Delete product', description: 'Recibe por parámetro el ID de un producto y lo elimina de la base de datos.'})
+    @DeleteProductDecorator()
     async deleteProduct(@Param('id') id: string) : Promise<Product> {
         return await this.productsService.deleteProduct(id);
     }

@@ -1,6 +1,7 @@
 import { Controller, Get, Post } from "@nestjs/common";
 import { CategoriesService } from "./categories.service";
 import { ApiOperation, ApiTags } from "@nestjs/swagger";
+import { GetAllCategoriesDecorator } from "./categories.decorator";
 
 @ApiTags('Categories')
 @Controller('categories')
@@ -15,7 +16,7 @@ export class CategoriesController {
     }*/
 
     @Get()
-    @ApiOperation({summary: 'Get all categories', description: 'Retorna un arreglo de objetos con todas las categorías.'})
+    @GetAllCategoriesDecorator()
     async getAllCategories() {
         return await this.categoriesService.getAllCategories();
     }

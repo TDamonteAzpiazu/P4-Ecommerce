@@ -1,10 +1,10 @@
 import { BadRequestException, Injectable, NotFoundException } from "@nestjs/common";
 import { InjectRepository } from "@nestjs/typeorm";
-import { User } from "src/Users/users.entity";
+import { User } from "../Users/users.entity";
 import { Repository } from "typeorm";
 import { Order } from "./orders.entity";
-import { Product } from "src/Products/products.entity";
-import { OrderDetail } from "src/OrderDetails/orderDetails.entity";
+import { Product } from "../Products/products.entity";
+import { OrderDetail } from "../OrderDetails/orderDetails.entity";
 import { CreateOrderDto } from "./createOrder.dto";
 
 @Injectable()
@@ -26,7 +26,7 @@ export class OrdersService {
         const updatedProduct = []
         let totalPrice = 0
 
-        const user = await this.usersRepository.findOne({ where: { id: data.userId } })
+        const user = await this.usersRepository.findOne({ where: { id: data.userId }, select:["id"] })
         if (!user) {
             throw new NotFoundException('User not found')
         }

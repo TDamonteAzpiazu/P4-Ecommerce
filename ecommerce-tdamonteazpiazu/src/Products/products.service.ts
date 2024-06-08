@@ -22,6 +22,7 @@ export class ProductsService implements OnModuleInit{
 
     async createProduct(product: ProductDto) : Promise<Product> {
         const existingProduct = await this.productsRepository.findOne({where: {name: product.name , description: product.description}});
+        console.log(existingProduct);
         if(existingProduct) {
             throw new NotFoundException('Product already exists, use the update Route');
         }

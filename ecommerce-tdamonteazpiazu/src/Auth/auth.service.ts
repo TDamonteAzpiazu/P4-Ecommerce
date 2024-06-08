@@ -11,9 +11,6 @@ import { JwtService } from "@nestjs/jwt";
 export class AuthService {
     constructor(@InjectRepository(User) private readonly usersRepository: Repository<User>,
     private readonly jwtService: JwtService) {}
-    getAuth(): string {
-        return "Getting auth";
-    }
 
     async signIn(credentials: AuthDto) : Promise<{message: string, token: string}> {
         const user = await this.usersRepository.findOne({where: {email: credentials.email}, select: [ 'id', 'email', 'password', 'role']});

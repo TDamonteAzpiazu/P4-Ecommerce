@@ -12,7 +12,7 @@ export class OrdersProductsDto {
 
     @ApiProperty({
         description: 'La cantidad de productos',
-        example: '2'
+        example: '1'
     })
     @IsNotEmpty()
     @IsNumber()
