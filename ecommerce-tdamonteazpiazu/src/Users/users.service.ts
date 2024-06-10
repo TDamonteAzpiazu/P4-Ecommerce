@@ -1,11 +1,8 @@
-import { BadRequestException, Injectable, NotFoundException, OnModuleInit } from "@nestjs/common";
+import { Injectable, InternalServerErrorException, NotFoundException, OnModuleInit } from "@nestjs/common";
 import { User } from "./users.entity";
 import { Repository } from "typeorm";
 import { InjectRepository } from "@nestjs/typeorm";
-import { Order } from "src/Orders/orders.entity";
-import { OrderDetail } from "src/OrderDetails/orderDetails.entity";
 import * as bcrypt from 'bcrypt';
-import { CreateUserDto } from "./createUser.dto";
 import { Role } from "src/Roles/roles.enum";
 
 @Injectable()
@@ -30,36 +27,73 @@ export class UsersService implements OnModuleInit{
     }
 
     async getUsers(pageNumber: number, limitNumber: number): Promise<User[]> {
-        const [users] = await this.usersRepository.findAndCount({
-            skip: (pageNumber - 1) * limitNumber,
-            take: limitNumber,
-            relations: { orders: true },
-            select: ['id', 'name', 'email', 'password', 'phone', 'country', 'address', 'city', 'role', 'orders']
-        });
-        return users;
+        try {
+            const [users] = await this.usersRepository.findAndCount({
+                skip: (pageNumber - 1) * limitNumber,
+                take: limitNumber,
+                relations: { orders: true },
+                select: ['id', 'name', 'email', 'password', 'phone', 'country', 'address', 'city', 'role']
+            });
+            if(users.length === 0) {
+                throw new NotFoundException('Users not found');
+            }
+            return users;
+        } catch (error) {
+            if(error instanceof NotFoundException) {
+                throw error;
+            }
+            throw new InternalServerErrorException();
+        }
     }
 
     async getUserById(id: string): Promise<User> {
-        const userFound = await this.usersRepository.findOne({ where : { id: id }, relations: { orders: true }});
-        if(!userFound) {
-            throw new NotFoundException('User not found');
+        try {
+            const userFound = await this.usersRepository.findOne({ where : { id: id }, relations: { orders: true }});
+            if(!userFound) {
+                throw new NotFoundException('User not found');
+            }
+            return userFound;
+        } catch (error) {
+            if(error instanceof NotFoundException) {
+                throw error;
+            } else {
+                throw new InternalServerErrorException();
+            }
         }
-        return userFound;
     }
 
     async updateUser(id: string, user: Partial<User>) : Promise<User> {
-        const foundUser = await this.usersRepository.findOne({ where : { id: id }});
-        this.usersRepository.merge(foundUser, user);
-        await this.usersRepository.save(foundUser);
-        return foundUser
+        try {
+            const foundUser = await this.usersRepository.findOne({ where : { id: id }});
+            if(!foundUser) {
+                throw new NotFoundException('User not found');
+            }
+            this.usersRepository.merge(foundUser, user);
+            await this.usersRepository.save(foundUser);
+            return foundUser
+        } catch (error) {
+            if(error instanceof NotFoundException) {
+                throw error;
+            } else {
+                throw new InternalServerErrorException();
+            }
+        }
     }
 
     async deleteUser(id: string) : Promise<User> {
-        const foundUser = await this.usersRepository.findOne({ where : { id: id }/*, relations: { orders: { orderDetail: true } }*/});
-        if(!foundUser) {
-            throw new NotFoundException('User not found');
+        try {
+            const foundUser = await this.usersRepository.findOne({ where : { id: id }/*, relations: { orders: { orderDetail: true } }*/});
+            if(!foundUser) {
+                throw new NotFoundException('User not found');
+            }
+            await this.usersRepository.remove(foundUser)
+            return foundUser
+        } catch (error) {
+            if(error instanceof NotFoundException) {
+                throw error;
+            } else {
+                throw new InternalServerErrorException();
+            }
         }
-        await this.usersRepository.remove(foundUser)
-        return foundUser
     }
 }

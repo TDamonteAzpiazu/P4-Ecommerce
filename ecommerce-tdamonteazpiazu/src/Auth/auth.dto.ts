@@ -4,7 +4,7 @@ import { IsEmail, IsNotEmpty, IsString, Matches, MaxLength, MinLength } from "cl
 export class AuthDto {
     @ApiProperty({
         description: 'El email del usuario',
-        example: 'nombre@example.com'
+        example: 'tobo@mail.com'
     })
     @IsNotEmpty()
     @IsEmail()
@@ -12,7 +12,7 @@ export class AuthDto {
     
     @ApiProperty({
         description: 'La contraseña del usuario',
-        example: 'ABcd1234!'
+        example: 'Password1!'
     })
     @IsNotEmpty()
     @IsString()

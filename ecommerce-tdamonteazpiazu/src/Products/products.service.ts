@@ -1,4 +1,4 @@
-import { Injectable, NotFoundException, OnModuleInit } from "@nestjs/common";
+import { Injectable, InternalServerErrorException, NotFoundException, OnModuleInit } from "@nestjs/common";
 import { InjectRepository } from "@nestjs/typeorm";
 import { Product } from "./products.entity";
 import { Repository } from "typeorm";
@@ -21,28 +21,35 @@ export class ProductsService implements OnModuleInit{
     }
 
     async createProduct(product: ProductDto) : Promise<Product> {
-        const existingProduct = await this.productsRepository.findOne({where: {name: product.name , description: product.description}});
-        console.log(existingProduct);
-        if(existingProduct) {
-            throw new NotFoundException('Product already exists, use the update Route');
+        try {
+            const existingProduct = await this.productsRepository.findOne({where: {name: product.name , description: product.description}});
+            if(existingProduct) {
+                throw new NotFoundException('Product already exists, use the update Route');
+            }
+            if(!product.category) {
+                throw new NotFoundException('Category is missing');
+            }
+            const category = await this.categoryRepository.findOne({where: {name: product.category}});
+            if(!category) {
+                throw new NotFoundException('Category not found');
+            }
+            const newProduct = this.productsRepository.create({
+                name: product.name,
+                description: product.description,
+                price: product.price,
+                stock: product.stock,
+                imgUrl: product.imgUrl,
+                category: category.id
+            });
+            await this.productsRepository.save(newProduct);
+            return newProduct;
+        } catch (error) {
+            if(error instanceof NotFoundException) {
+                throw error;
+            } else {
+                throw new InternalServerErrorException();
+            }
         }
-        if(!product.category) {
-            throw new NotFoundException('Category is missing');
-        }
-        const category = await this.categoryRepository.findOne({where: {name: product.category}});
-        if(!category) {
-            throw new NotFoundException('Category not found');
-        }
-        const newProduct = this.productsRepository.create({
-            name: product.name,
-            description: product.description,
-            price: product.price,
-            stock: product.stock,
-            imgUrl: product.imgUrl,
-            category: category.id
-        });
-        await this.productsRepository.save(newProduct);
-        return newProduct;
     }
 
     async seedProducts() {
@@ -60,38 +67,80 @@ export class ProductsService implements OnModuleInit{
     }
 
     async getAllProducts(page: number, limit: number) : Promise<Product[]> {
-        const [products] = await this.productsRepository.findAndCount({
-            skip: (page - 1) * limit,
-            take: limit,
-            relations: { category: true },
-        });
-        return products;
+        try {
+            const [products] = await this.productsRepository.findAndCount({
+                skip: (page - 1) * limit,
+                take: limit,
+                relations: { category: true },
+            });
+            if(products.length === 0) {
+                throw new NotFoundException('Products not found');
+            }
+            return products;
+        } catch (error) {
+            if(error instanceof NotFoundException) {
+                throw error;
+            } else {
+                throw new InternalServerErrorException();
+            }
+        }
     }
 
     async getProductById(id: string) : Promise<Product> {
-        return await this.productsRepository.findOne({where: {id: id}, relations: { category: true }});
+        try {
+            const foundProduct = await this.productsRepository.findOne({where: {id: id}, relations: { category: true }});
+            if(!foundProduct) {
+                throw new NotFoundException('Product not found');
+            }
+            return foundProduct;
+        } catch (error) {
+            if(error instanceof NotFoundException) {
+                throw error;
+            } else {
+                throw new InternalServerErrorException();
+            }
+        }
     }
 
     async updateProduct(id: string, product: Partial<ProductDto>) : Promise<Product> {
-        const productToUpdate = await this.productsRepository.findOne({where: {id: id}});
-        if(!productToUpdate) {
-            throw new NotFoundException('Product not found');
-        }
-        if(product.category){
-            const category = await this.categoryRepository.findOne({where: {name: product.category}});
-            if(!category) {
-                throw new NotFoundException('Category not found');
+        try {
+            const productToUpdate = await this.productsRepository.findOne({where: {id: id}});
+            if(!productToUpdate) {
+                throw new NotFoundException('Product not found');
             }
-            product.category = category.id;
+            if(product.category){
+                const category = await this.categoryRepository.findOne({where: {name: product.category}});
+                if(!category) {
+                    throw new NotFoundException('Category not found');
+                }
+                product.category = category.id;
+            }
+            this.productsRepository.merge(productToUpdate, product);
+            await this.productsRepository.save(productToUpdate);
+            return productToUpdate;
+        } catch (error) {
+            if(error instanceof NotFoundException) {
+                throw error;
+            } else {
+                throw new InternalServerErrorException();
+            }
         }
-        this.productsRepository.merge(productToUpdate, product);
-        await this.productsRepository.save(productToUpdate);
-        return productToUpdate;
     }
 
     async deleteProduct(id: string) : Promise<Product> {
-        const productToDelete = await this.productsRepository.findOne({where: {id: id}});
-        await this.productsRepository.remove(productToDelete);
-        return productToDelete;
+        try {
+            const productToDelete = await this.productsRepository.findOne({where: {id: id}});
+            if(!productToDelete) {
+                throw new NotFoundException('Product not found');
+            }
+            await this.productsRepository.remove(productToDelete);
+            return productToDelete;
+        } catch (error) {
+            if(error instanceof NotFoundException) {
+                throw error;
+            } else {
+                throw new InternalServerErrorException();
+            }
+        }
     }
 }

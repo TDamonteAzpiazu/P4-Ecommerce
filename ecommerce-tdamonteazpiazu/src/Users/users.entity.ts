@@ -22,7 +22,7 @@ export class User {
 
     @ApiProperty({
         description: 'El correo del usuario',
-        example: 'example@mail.com'
+        example: 'tobo@mail.com'
     })
     @Column({ type: 'varchar', length: 50, nullable: false, unique: true})
     email: string;
@@ -43,7 +43,7 @@ export class User {
 
     @ApiProperty({
         description: 'El país del usuario',
-        example: 'Colombia'
+        example: 'Argentina'
     })
     @Column({ type: 'varchar', length: 50 , nullable: true})
     country: string;
@@ -57,7 +57,7 @@ export class User {
 
     @ApiProperty({
         description: 'La ciudad del usuario',
-        example: 'Bogota'
+        example: 'Buenos Aires'
     })
     @Column({ type: 'varchar', length: 50 , nullable: true})
     city: string;
