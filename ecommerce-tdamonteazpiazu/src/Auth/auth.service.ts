@@ -46,9 +46,9 @@ export class AuthService {
             if(user.password !== user.confirmPassword) {
                 throw new BadRequestException('Passwords do not match');
             }
-            const userFound = await this.usersRepository.findOne({where: {email: user.email, password: user.password}});
+            const userFound = await this.usersRepository.findOne({where: {email: user.email}});
             if (userFound) {
-                throw new BadRequestException('User already exists, please sign in.');
+                throw new BadRequestException('User with this email already exists, please sign in.');
             }
     
             const hashedPassword = await bcrypt.hash(user.password, 10);

@@ -4,6 +4,7 @@ import { Repository } from "typeorm";
 import { InjectRepository } from "@nestjs/typeorm";
 import * as bcrypt from 'bcrypt';
 import { Role } from "src/Roles/roles.enum";
+import { CreateUserDto } from "./createUser.dto";
 
 @Injectable()
 export class UsersService implements OnModuleInit{
@@ -62,7 +63,7 @@ export class UsersService implements OnModuleInit{
         }
     }
 
-    async updateUser(id: string, user: Partial<User>) : Promise<User> {
+    async updateUser(id: string, user: Partial<CreateUserDto>) : Promise<User> {
         try {
             const foundUser = await this.usersRepository.findOne({ where : { id: id }});
             if(!foundUser) {
