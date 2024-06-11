@@ -1,4 +1,4 @@
-import { ArrayMinSize, IsArray, IsNotEmpty, IsUUID, MinLength } from "class-validator"
+import { ArrayMinSize, IsArray, IsNotEmpty, IsUUID } from "class-validator"
 import { OrdersProductsDto } from "./ordersProducts.dto"
 import { ApiProperty } from "@nestjs/swagger"
 

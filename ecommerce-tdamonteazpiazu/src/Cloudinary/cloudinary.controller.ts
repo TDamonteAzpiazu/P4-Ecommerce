@@ -3,7 +3,7 @@ import { CloudinaryService } from "./cloudinary.service";
 import { FileInterceptor } from "@nestjs/platform-express";
 import { ProductsService } from "../Products/products.service";
 import { AuthorizationGuard } from "../guards/authorization.guard";
-import { ApiBearerAuth, ApiBody, ApiConsumes, ApiOperation, ApiTags } from "@nestjs/swagger";
+import { ApiBearerAuth, ApiTags } from "@nestjs/swagger";
 import { UploadImageDecorator } from "./cloudinary.decorator";
 
 @ApiTags('Files')

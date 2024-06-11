@@ -2,7 +2,7 @@ import { Body, Controller, Get, Param, ParseUUIDPipe, Post, UseGuards } from "@n
 import { OrdersService } from "./orders.service";
 import { CreateOrderDto } from "./createOrder.dto";
 import { AuthorizationGuard } from "../guards/authorization.guard";
-import { ApiBearerAuth, ApiBody, ApiOperation, ApiTags } from "@nestjs/swagger";
+import { ApiBearerAuth, ApiTags } from "@nestjs/swagger";
 import { CreateOrderDecorator, GetAllOrderDecorator, GetOrderByIdDecorator } from "./orders.decorator";
 
 @ApiTags('Orders')

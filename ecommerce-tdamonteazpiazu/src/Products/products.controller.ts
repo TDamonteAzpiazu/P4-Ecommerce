@@ -6,7 +6,7 @@ import { ProductDto } from "./product.dto";
 import { Roles } from "../Roles/role.decorator";
 import { Role } from "../Roles/roles.enum";
 import { RolesGuard } from "../guards/admin.guard";
-import { ApiBearerAuth, ApiBody, ApiOperation, ApiQuery, ApiTags } from "@nestjs/swagger";
+import { ApiBearerAuth, ApiTags } from "@nestjs/swagger";
 import { CreateProductDecorator, DeleteProductDecorator, GetAllProductsDecorator, GetProductByIdDecorator, UpdateProductDecorator } from "./product.decorator";
 
 @ApiTags('Products')

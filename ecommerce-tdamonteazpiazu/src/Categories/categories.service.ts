@@ -1,4 +1,4 @@
-import { Injectable, InternalServerErrorException, OnModuleInit } from "@nestjs/common";
+import { Injectable, InternalServerErrorException } from "@nestjs/common";
 import { InjectRepository } from "@nestjs/typeorm";
 import { Category } from "./categories.entity";
 import { Repository } from "typeorm";

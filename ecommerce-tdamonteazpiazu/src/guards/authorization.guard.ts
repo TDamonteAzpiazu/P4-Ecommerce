@@ -1,11 +1,6 @@
 import { CanActivate, ExecutionContext, Injectable, UnauthorizedException } from "@nestjs/common";
 import { Observable } from "rxjs";
-// import {config as dotenvConfig} from "dotenv"
 import { JwtService } from "@nestjs/jwt";
-import { log } from "console";
-
-// dotenvConfig({path: '.development.env'})
-
 
 @Injectable()
 export class AuthorizationGuard implements CanActivate{

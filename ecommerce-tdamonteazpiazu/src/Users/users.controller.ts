@@ -6,7 +6,7 @@ import { CreateUserDto } from "./createUser.dto";
 import { Roles } from "../Roles/role.decorator";
 import { Role } from "../Roles/roles.enum";
 import { RolesGuard } from "../guards/admin.guard";
-import { ApiBearerAuth, ApiBody, ApiOperation, ApiQuery, ApiTags, PartialType } from "@nestjs/swagger";
+import { ApiBearerAuth, ApiTags } from "@nestjs/swagger";
 import { DeleteUserDecorator, GetAllUsersDecorator, GetUserByIdDecorator, UpdateUserDecorator } from "./users.decorator";
 
 @ApiTags('Users')
